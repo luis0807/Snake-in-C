@@ -5,6 +5,19 @@
 #define WIDTH 60
 #define HEIGHT 30
 
+//Variaveis globais
+int gameOver, FruitX, FruitY;
+
+enum dir
+{
+    Stop = 0,
+    Left,
+    Right,
+    Up,
+    Down
+};
+enum dir dir;
+
 typedef struct
 {
     int x, y;
@@ -12,6 +25,18 @@ typedef struct
 } Snake;
 
 Snake snake;
+
+void setup()
+{
+    gameOver = 0;
+    dir = Stop;
+    snake.x = HEIGHT / 2;
+    snake.y = WIDTH / 2;
+    snake.SnakeLen = 0;
+    FruitX = rand() % (HEIGHT - 2) + 1;
+    FruitY = rand() % (WIDTH - 2) + 1;
+
+}
 
 void menu()
 {
@@ -53,7 +78,7 @@ int main()
 {
     int i, j, FB = 0;
 
-    //FrameBuffer 10 FPS
+    // FrameBuffer 10 FPS
     while (FB == 0)
     {
         drawMap(i, j);
