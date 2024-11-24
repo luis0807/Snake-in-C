@@ -132,7 +132,7 @@ int main()
 
     inicializar_jogo(&cobra, &fruta); // Configuracoes iniciais
 
-    printf("\t\tIniciar Jogo -> 'S'");
+    printf("Iniciar Jogo -> 'S'");
     printf("\t\t\nSair do Jogo -> Pressione qualquer tecla");
 
     iniciar_jogo = _getch();
