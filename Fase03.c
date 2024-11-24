@@ -20,6 +20,13 @@ typedef struct
     char direcao;     // Direcao atual ('w', 'a', 's', 'd')
 } Cobra;
 
+//Estrutura para representar o login e a Maior Pontuacao;
+typedef struct
+{
+    char nome[50];
+    int maiorPontuacao;
+} Jogador;
+
 // Inicializa o jogo, definindo a posicao inicial da cobra e da fruta
 void inicializar_jogo(Cobra *cobra, Ponto *fruta)
 {
@@ -32,10 +39,11 @@ void inicializar_jogo(Cobra *cobra, Ponto *fruta)
 }
 
 // Desenha o mapa, a cobra e a fruta na tela
-void desenhar_jogo(Cobra *cobra, Ponto *fruta)
+void desenhar_jogo(Cobra *cobra, Ponto *fruta, int pontuacao)
 {
-    system("cls"); // Limpa a tela (use "clear" em sistemas Unix)
-    int x, y, i;
+    int x ,y, i;
+    system("cls");// Limpa a tela (use "clear" em sistemas Unix)
+    printf("Pontuacao: %d\n", pontuacao);
     for (y = 0; y < ALTURA; y++)
     {
         for (x = 0; x < LARGURA; x++)
@@ -95,7 +103,7 @@ void mover_cobra(Cobra *cobra)
 }
 
 // Verifica se a cobra colidiu consigo mesma ou comeu a fruta
-int verificar_colisao(Cobra *cobra, Ponto *fruta)
+int verificar_colisao(Cobra *cobra, Ponto *fruta, int *pontuacao)
 {
     // Verifica colisao com o proprio corpo
     int i;
@@ -108,8 +116,10 @@ int verificar_colisao(Cobra *cobra, Ponto *fruta)
     // Verifica se comeu a fruta
     if (cobra->corpo[0].x == fruta->x && cobra->corpo[0].y == fruta->y)
     {
+    	
         cobra->tamanho++; // Aumenta o tamanho da cobra
         // Posiciona a nova fruta, garantindo que nao esteja dentro da cobra
+        (*pontuacao)++; // Uma fruta == mais 1 Ponto;
         do
         {
             fruta->x = rand() % (LARGURA - 2) + 1;
@@ -130,37 +140,74 @@ void mudar_direcao(Cobra *cobra, char tecla)
         cobra->direcao = tecla;
 }
 
+//Abre o Arquivo .txt e salva a maior Pontuacao do Login;
+void salvar_maior_pontuacao(Jogador *jogador)
+{
+    FILE *arquivo = fopen("recordefase3.txt", "w");
+    if (arquivo)
+    {
+        fprintf(arquivo, "%s %d\n", jogador->nome, jogador->maiorPontuacao);
+        fclose(arquivo);
+    }
+}
+
+//Abre o Arquivo para mostrar a maior Pontuacao;
+void carregar_maior_pontuacao(Jogador *jogador) // Função para acessar o arquivo do maior recorde;
+{
+    FILE *arquivo = fopen("recordefase3.txt", "r");
+    if (arquivo)
+    {
+        fscanf(arquivo, "%s %d", jogador->nome, &jogador->maiorPontuacao);
+        fclose(arquivo);
+    }
+    else
+    {
+        strcpy(jogador->nome, "Fulano");
+        jogador->maiorPontuacao = 0;
+    }
+}
+
 // Funcao principal
 int main()
 {
     Cobra cobra;
     Ponto fruta;
-    int jogo_terminado = 0;
+    Jogador jogador;
+    int pontuacao = 0, jogo_terminado = 0;
     char iniciar_jogo;
-
     inicializar_jogo(&cobra, &fruta); // Configuracoes iniciais
 
     printf("Iniciar Jogo -> 'S'");
     printf("\nSair do Jogo -> Pressione qualquer tecla");
-
+    
     iniciar_jogo = _getch();
     if (iniciar_jogo == 'S' || iniciar_jogo == 's')
     {
+    	carregar_maior_pontuacao(&jogador);
+
+    	printf("\nBem-vindo ao jogo da Cobrinha!\n");
+    	printf("Maior pontuacao: %s: %d\n", jogador.nome, jogador.maiorPontuacao);
+    	printf("Login: ");
+    	scanf("%s", jogador.nome);
+
         while (!jogo_terminado)
         {
-            desenhar_jogo(&cobra, &fruta); // Mostra o estado atual do jogo
+            desenhar_jogo(&cobra, &fruta, pontuacao); // Mostra o estado atual do jogo
             if (_kbhit())
                 mudar_direcao(&cobra, _getch());                // Captura entrada do jogador
             mover_cobra(&cobra);                                // Move a cobra
-            jogo_terminado = verificar_colisao(&cobra, &fruta); // Verifica colisoes
+            jogo_terminado = verificar_colisao(&cobra, &fruta, &pontuacao); // Verifica colisoes
             _sleep(80);                                        // Pausa para ajustar a velocidade do jogo
         }
     }
 
-    else
+     printf("\nFim de Jogo!\n");
+    if (pontuacao > jogador.maiorPontuacao)
     {
+        jogador.maiorPontuacao = pontuacao;
+        salvar_maior_pontuacao(&jogador);
+        printf("\nNovo recorde!\n");
     }
     
-    printf("Fim de Jogo!\n");
     return 0;
 }
