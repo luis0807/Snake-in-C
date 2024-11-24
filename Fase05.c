@@ -3,8 +3,8 @@
 #include <time.h>
 #include <conio.h> // Biblioteca para usar _getch(), _kbhit() e _sleep()
 
-#define LARGURA 40
-#define ALTURA 20
+#define LARGURA 20
+#define ALTURA 10
 
 // Estrutura para representar um ponto no mapa
 typedef struct
@@ -66,7 +66,7 @@ void desenhar_jogo(Cobra *cobra, Ponto *fruta)
 }
 
 // Move a cobra na direcao atual
-void mover_cobra(Cobra *cobra)
+int mover_cobra(Cobra *cobra)
 {
     // Move cada parte do corpo para a posicao da parte anterior
     int i;
@@ -82,27 +82,19 @@ void mover_cobra(Cobra *cobra)
         cobra->corpo[0].y++; // Para baixo
     else if (cobra->direcao == 'd')
         cobra->corpo[0].x++; // Para a direita
-
-    // Permite que a cobra atravesse as paredes e apareca do outro lado
-    if (cobra->corpo[0].x <= 0)
-        cobra->corpo[0].x = LARGURA - 2;
-    if (cobra->corpo[0].x >= LARGURA - 1)
-        cobra->corpo[0].x = 1;
-    if (cobra->corpo[0].y <= 0)
-        cobra->corpo[0].y = ALTURA - 2;
-    if (cobra->corpo[0].y >= ALTURA - 1)
-        cobra->corpo[0].y = 1;
 }
 
 // Verifica se a cobra colidiu consigo mesma ou comeu a fruta
 int verificar_colisao(Cobra *cobra, Ponto *fruta)
 {
-    // Verifica colisao com o proprio corpo
+    // Verifica colisao com o proprio corpo e as paredes
     int i;
     for (i = 1; i < cobra->tamanho; i++)
     {
         if (cobra->corpo[0].x == cobra->corpo[i].x && cobra->corpo[0].y == cobra->corpo[i].y)
             return 1; // Jogo termina
+        if (cobra->corpo[0].x <= 0 || cobra->corpo[0].x >= LARGURA - 1 || cobra->corpo[0].y <= 0 || cobra->corpo[0].y >= ALTURA - 1)
+            return 1;
     }
 
     // Verifica se comeu a fruta
@@ -137,10 +129,11 @@ int main()
     Ponto fruta;
     int jogo_terminado = 0;
     char iniciar_jogo;
+
     inicializar_jogo(&cobra, &fruta); // Configuracoes iniciais
 
-    printf("Iniciar Jogo -> 'S'");
-    printf("\nSair do Jogo -> Pressione qualquer tecla");
+    printf("\t\tIniciar Jogo -> 'S'");
+    printf("\t\t\nSair do Jogo -> Pressione qualquer tecla");
 
     iniciar_jogo = _getch();
     if (iniciar_jogo == 'S' || iniciar_jogo == 's')
@@ -152,14 +145,14 @@ int main()
                 mudar_direcao(&cobra, _getch());                // Captura entrada do jogador
             mover_cobra(&cobra);                                // Move a cobra
             jogo_terminado = verificar_colisao(&cobra, &fruta); // Verifica colisoes
-            _sleep(100);                                        // Pausa para ajustar a velocidade do jogo
+            _sleep(60);                                         // Pausa para ajustar a velocidade do jogo
         }
     }
 
     else
     {
     }
-    
+
     printf("Fim de Jogo!\n");
     return 0;
 }

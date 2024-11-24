@@ -3,8 +3,8 @@
 #include <time.h>
 #include <conio.h> // Biblioteca para usar _getch(), _kbhit() e _sleep()
 
-#define LARGURA 40
-#define ALTURA 20
+#define LARGURA 20
+#define ALTURA 10
 
 // Estrutura para representar um ponto no mapa
 typedef struct
@@ -137,6 +137,7 @@ int main()
     Ponto fruta;
     int jogo_terminado = 0;
     char iniciar_jogo;
+
     inicializar_jogo(&cobra, &fruta); // Configuracoes iniciais
 
     printf("Iniciar Jogo -> 'S'");
@@ -152,7 +153,7 @@ int main()
                 mudar_direcao(&cobra, _getch());                // Captura entrada do jogador
             mover_cobra(&cobra);                                // Move a cobra
             jogo_terminado = verificar_colisao(&cobra, &fruta); // Verifica colisoes
-            _sleep(100);                                        // Pausa para ajustar a velocidade do jogo
+            _sleep(80);                                        // Pausa para ajustar a velocidade do jogo
         }
     }
 
