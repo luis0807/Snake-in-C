@@ -143,7 +143,7 @@ void mudar_direcao(Cobra *cobra, char tecla)
 //Abre o Arquivo .txt e salva a maior Pontuacao do Login;
 void salvar_maior_pontuacao(Jogador *jogador)
 {
-    FILE *arquivo = fopen("recorde.txt", "w");
+    FILE *arquivo = fopen("recordefase1.txt", "w");
     if (arquivo)
     {
         fprintf(arquivo, "%s %d\n", jogador->nome, jogador->maiorPontuacao);
@@ -154,7 +154,7 @@ void salvar_maior_pontuacao(Jogador *jogador)
 //Abre o Arquivo para mostrar a maior Pontuacao;
 void carregar_maior_pontuacao(Jogador *jogador) // Função para acessar o arquivo do maior recorde;
 {
-    FILE *arquivo = fopen("recorde.txt", "r");
+    FILE *arquivo = fopen("recordefase1.txt", "r");
     if (arquivo)
     {
         fscanf(arquivo, "%s %d", jogador->nome, &jogador->maiorPontuacao);
